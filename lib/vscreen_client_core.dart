@@ -1,111 +1,54 @@
-import 'package:web_socket_channel/io.dart';
-import 'dart:convert';
-
-class Operation {
-  static const int auth = 0;
-  static const int play = 1;
-  static const int pause = 2;
-  static const int stop = 3;
-  static const int next = 4;
-  static const int add = 5;
-  static const int seek = 6;
-}
-
-enum Status { none }
+import 'generated/vscreen.pb.dart';
+import 'generated/vscreen.pbgrpc.dart';
+import 'package:grpc/grpc.dart';
 
 class VScreen {
-  final String url;
-  final int port;
-  IOWebSocketChannel channel;
+  ClientChannel channel;
+  VScreenClient stub;
+  final Empty _empty = Empty();
 
-  VScreen(
-    this.url,
-    this.port, {
-    void Function(Status status) authCallback,
-    void Function(Status status) playCallback,
-    void Function(Status status) pauseCallback,
-    void Function(Status status) stopCallback,
-    void Function(Status status) nextCallback,
-    void Function(Status status) addCallback,
-    void Function(Status status) seekCallback,
-  }) {
-    channel = IOWebSocketChannel.connect('ws://$url:$port');
-    channel.stream.listen((data) {
-      Map<String, dynamic> resp = json.decode(data);
-      Status status = resp["status"];
-
-      switch (resp["operation"]) {
-        case Operation.auth:
-          authCallback(status);
-          break;
-        case Operation.play:
-          playCallback(status);
-          break;
-        case Operation.pause:
-          pauseCallback(status);
-          break;
-        case Operation.stop:
-          stopCallback(status);
-          break;
-        case Operation.next:
-          nextCallback(status);
-          break;
-        case Operation.add:
-          addCallback(status);
-          break;
-        case Operation.seek:
-          seekCallback(status);
-          break;
-      }
-    });
+  VScreen(String url, int port) {
+    channel = ClientChannel(url,
+        port: port,
+        options: const ChannelOptions(
+            credentials: const ChannelCredentials.insecure()));
+    stub = VScreenClient(channel,
+        options: new CallOptions(timeout: new Duration(seconds: 30)));
   }
 
-  void dispose() {
-    this.channel.sink.close();
+  void close() async {
+    await this.channel.shutdown();
   }
 
-  void _send(Map<String, dynamic> request) {
-    var packet = json.encode(request);
-    this.channel.sink.add(packet);
+  Future<Status> auth(Credential credential) async {
+    return await stub.auth(credential);
   }
 
-  void auth(String password) {
-    var request = {
-      "operation": Operation.auth,
-      "version": "0.1.0",
-      "password": password
-    };
-
-    _send(request);
+  Future<Status> play() async {
+    return await stub.play(_empty);
   }
 
-  void play() {
-    var request = {"operation": Operation.play};
-    _send(request);
+  Future<Status> pause() async {
+    return await stub.pause(_empty);
   }
 
-  void pause() {
-    var request = {"operation": Operation.pause};
-    _send(request);
+  Future<Status> stop() async {
+    return await stub.stop(_empty);
   }
 
-  void stop() {
-    var request = {"operation": Operation.stop};
-    _send(request);
+  Future<Status> next() async {
+    return await stub.next(_empty);
   }
 
-  void next() {
-    var request = {"operation": Operation.next};
-    _send(request);
+  Future<Status> add(String url) async {
+    var source = Source();
+    source.url = url;
+    return await stub.add(source);
   }
 
-  void add(String url) {
-    var request = {"operation": Operation.add, "url": url};
-    _send(request);
-  }
-
-  void seek(double position) {
-    var request = {"operation": Operation.seek, "position": position};
-    _send(request);
+  Future<Status> seek(double pos) async {
+    var position = Position();
+    position.value = pos;
+    return await stub.seek(position);
   }
 }
