@@ -55,12 +55,37 @@ class VScreen {
     });
   }
 
+  void dispose() {
+    this.channel.sink.close();
+  }
+
   void auth(String password) {
     var request = {
       "operation": Operation.auth,
       "version": "0.1.0",
       "password": password
     };
+
+    var packet = json.encode(request);
+    this.channel.sink.add(packet);
+  }
+
+  void play() {
+    var request = {"operation": Operation.play};
+
+    var packet = json.encode(request);
+    this.channel.sink.add(packet);
+  }
+
+  void pause() {
+    var request = {"operation": Operation.pause};
+
+    var packet = json.encode(request);
+    this.channel.sink.add(packet);
+  }
+
+  void next() {
+    var request = {"operation": Operation.next};
 
     var packet = json.encode(request);
     this.channel.sink.add(packet);
@@ -73,8 +98,8 @@ class VScreen {
     this.channel.sink.add(packet);
   }
 
-  void play() {
-    var request = {"operation": Operation.play};
+  void seek(double position) {
+    var request = {"operation": Operation.seek, "position": position};
 
     var packet = json.encode(request);
     this.channel.sink.add(packet);
