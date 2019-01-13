@@ -1,7 +1,7 @@
 name: vscreen_client_core
 description: this is vscreen client core implementation
 homepage: https://github.com/vscreen
-version: 0.1.2
+version: 0.1.3
 authors:
   - Lukas Herman <lherman.cs@gmail.com>
 dependencies:
