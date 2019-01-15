@@ -1,13 +1,19 @@
 import 'generated/vscreen.pb.dart';
 import 'generated/vscreen.pbgrpc.dart';
 import 'package:grpc/grpc.dart';
+import 'package:uuid/uuid.dart';
 
 class VScreen {
   ClientChannel channel;
   VScreenClient stub;
   final Empty _empty = Empty();
+  final String _id = Uuid().v4();
+  User _user;
 
   VScreen(String url, int port) {
+    _user = User();
+    _user.id = _id;
+
     channel = ClientChannel(url,
         port: port,
         options: const ChannelOptions(
@@ -20,7 +26,9 @@ class VScreen {
     await this.channel.shutdown();
   }
 
-  Future<Status> auth(Credential credential) async {
+  Future<Status> auth(String password) async {
+    var credential = Credential();
+    credential.password = password;
     return await stub.auth(credential);
   }
 
@@ -50,5 +58,16 @@ class VScreen {
     var position = Position();
     position.value = pos;
     return await stub.seek(position);
+  }
+
+  Stream<Info> subscribe() async* {
+    var infoStream = stub.subscribe(_user);
+    await for (var info in infoStream) {
+      yield info;
+    }
+  }
+
+  Future<Status> unsubscribe() async {
+    return await stub.unsubscribe(_user);
   }
 }

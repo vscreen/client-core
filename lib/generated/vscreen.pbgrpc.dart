@@ -40,6 +40,14 @@ class VScreenClient extends Client {
       '/VScreen/Seek',
       (Position value) => value.writeToBuffer(),
       (List<int> value) => new Status.fromBuffer(value));
+  static final _$subscribe = new ClientMethod<User, Info>(
+      '/VScreen/Subscribe',
+      (User value) => value.writeToBuffer(),
+      (List<int> value) => new Info.fromBuffer(value));
+  static final _$unsubscribe = new ClientMethod<User, Status>(
+      '/VScreen/Unsubscribe',
+      (User value) => value.writeToBuffer(),
+      (List<int> value) => new Status.fromBuffer(value));
 
   VScreenClient(ClientChannel channel, {CallOptions options})
       : super(channel, options: options);
@@ -82,6 +90,20 @@ class VScreenClient extends Client {
 
   ResponseFuture<Status> seek(Position request, {CallOptions options}) {
     final call = $createCall(_$seek, new $async.Stream.fromIterable([request]),
+        options: options);
+    return new ResponseFuture(call);
+  }
+
+  ResponseStream<Info> subscribe(User request, {CallOptions options}) {
+    final call = $createCall(
+        _$subscribe, new $async.Stream.fromIterable([request]),
+        options: options);
+    return new ResponseStream(call);
+  }
+
+  ResponseFuture<Status> unsubscribe(User request, {CallOptions options}) {
+    final call = $createCall(
+        _$unsubscribe, new $async.Stream.fromIterable([request]),
         options: options);
     return new ResponseFuture(call);
   }
@@ -140,6 +162,20 @@ abstract class VScreenServiceBase extends Service {
         false,
         (List<int> value) => new Position.fromBuffer(value),
         (Status value) => value.writeToBuffer()));
+    $addMethod(new ServiceMethod<User, Info>(
+        'Subscribe',
+        subscribe_Pre,
+        false,
+        true,
+        (List<int> value) => new User.fromBuffer(value),
+        (Info value) => value.writeToBuffer()));
+    $addMethod(new ServiceMethod<User, Status>(
+        'Unsubscribe',
+        unsubscribe_Pre,
+        false,
+        false,
+        (List<int> value) => new User.fromBuffer(value),
+        (Status value) => value.writeToBuffer()));
   }
 
   $async.Future<Status> auth_Pre(
@@ -176,6 +212,16 @@ abstract class VScreenServiceBase extends Service {
     return seek(call, await request);
   }
 
+  $async.Stream<Info> subscribe_Pre(
+      ServiceCall call, $async.Future request) async* {
+    yield* subscribe(call, (await request) as User);
+  }
+
+  $async.Future<Status> unsubscribe_Pre(
+      ServiceCall call, $async.Future request) async {
+    return unsubscribe(call, await request);
+  }
+
   $async.Future<Status> auth(ServiceCall call, Credential request);
   $async.Future<Status> play(ServiceCall call, Empty request);
   $async.Future<Status> pause(ServiceCall call, Empty request);
@@ -183,4 +229,6 @@ abstract class VScreenServiceBase extends Service {
   $async.Future<Status> next(ServiceCall call, Empty request);
   $async.Future<Status> add(ServiceCall call, Source request);
   $async.Future<Status> seek(ServiceCall call, Position request);
+  $async.Stream<Info> subscribe(ServiceCall call, User request);
+  $async.Future<Status> unsubscribe(ServiceCall call, User request);
 }

@@ -8,19 +8,39 @@
 import 'dart:core' show int, dynamic, String, List, Map;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class Status_Code extends $pb.ProtobufEnum {
-  static const Status_Code OK = const Status_Code._(0, 'OK');
+class StatusCode extends $pb.ProtobufEnum {
+  static const StatusCode OK = const StatusCode._(0, 'OK');
 
-  static const List<Status_Code> values = const <Status_Code> [
+  static const List<StatusCode> values = const <StatusCode> [
     OK,
   ];
 
-  static final Map<int, Status_Code> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static Status_Code valueOf(int value) => _byValue[value];
-  static void $checkItem(Status_Code v) {
-    if (v is! Status_Code) $pb.checkItemFailed(v, 'Status_Code');
+  static final Map<int, StatusCode> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static StatusCode valueOf(int value) => _byValue[value];
+  static void $checkItem(StatusCode v) {
+    if (v is! StatusCode) $pb.checkItemFailed(v, 'StatusCode');
   }
 
-  const Status_Code._(int v, String n) : super(v, n);
+  const StatusCode._(int v, String n) : super(v, n);
+}
+
+class Info_State extends $pb.ProtobufEnum {
+  static const Info_State PLAYING = const Info_State._(0, 'PLAYING');
+  static const Info_State PAUSED = const Info_State._(1, 'PAUSED');
+  static const Info_State STOPPED = const Info_State._(2, 'STOPPED');
+
+  static const List<Info_State> values = const <Info_State> [
+    PLAYING,
+    PAUSED,
+    STOPPED,
+  ];
+
+  static final Map<int, Info_State> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static Info_State valueOf(int value) => _byValue[value];
+  static void $checkItem(Info_State v) {
+    if (v is! Info_State) $pb.checkItemFailed(v, 'Info_State');
+  }
+
+  const Info_State._(int v, String n) : super(v, n);
 }
 
