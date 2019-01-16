@@ -1,12 +1,13 @@
 name: vscreen_client_core
 description: this is vscreen client core implementation
 homepage: https://github.com/vscreen
-version: 0.1.4
+version: 0.1.7
 authors:
   - Lukas Herman <lherman.cs@gmail.com>
 dependencies:
   grpc:
   protobuf:
   uuid: 2.0.0-rc1
+  bloc: ^0.8.0
 environment:
     sdk: ">=1.8.0 <3.0.0"
