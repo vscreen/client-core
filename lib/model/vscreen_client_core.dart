@@ -23,7 +23,6 @@ class VScreen {
   }
 
   void close() async {
-    await this._unsubscribe();
     await this.channel.shutdown();
   }
 
@@ -68,7 +67,7 @@ class VScreen {
     }
   }
 
-  Future<Status> _unsubscribe() async {
+  Future<Status> unsubscribe() async {
     return await stub.unsubscribe(_user);
   }
 }
