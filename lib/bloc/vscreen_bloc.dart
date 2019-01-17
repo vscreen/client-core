@@ -17,6 +17,9 @@ class VScreenBloc {
   VScreenState _state;
   VScreen _vscreen = null; // Repository
 
+  // TODO! Probably use a better approach
+  bool _test = false;
+
   VScreenBloc() {
     _state = VScreenState.inital();
     _eventController.stream.listen(mapEventToState);
@@ -25,6 +28,7 @@ class VScreenBloc {
   /// DO NOT USE THIS CONSTRUCTOR!
   VScreenBloc.test(VScreen vscreen) {
     _vscreen = vscreen;
+    _test = true;
     _state = VScreenState.inital();
     _eventController.stream.listen(mapEventToState);
   }
@@ -74,7 +78,9 @@ class VScreenBloc {
       _vscreen.close();
     }
 
-    _vscreen = VScreen(e.url, e.port);
+    // TODO! Probably use a better approach
+    if (!_test) _vscreen = VScreen(e.url, e.port);
+
     _vscreen.subscribe().listen((info) {
       _state.title = info.title;
       _state.thumbnailURL = info.thumbnailURL;

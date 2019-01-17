@@ -376,4 +376,37 @@ void main() {
       expect(curState.errorReason, equals("[seek] unknown error"));
     });
   });
+
+  group('connect', () {
+    test('should get server responses after operations', () async {
+      var vscreen = MockVScreen();
+      Info info1 = Info();
+      info1.title = "title1";
+      info1.thumbnailURL = "thumbnail1";
+      info1.volume = 1;
+      info1.position = 0.1;
+      info1.state = Info_State.PLAYING;
+
+      var infos = Stream.fromIterable([info1]);
+
+      when(vscreen.subscribe()).thenAnswer((_) => infos);
+
+      var vscreenBloc = VScreenBloc.test(vscreen);
+      var stateQueue = StreamQueue(vscreenBloc.vscreenState);
+
+      vscreenBloc.dispatch(Connect("127.0.0.1", 8080));
+      var curState = await stateQueue.next;
+      expect(curState.url, equals("127.0.0.1"));
+      expect(curState.port, equals(8080));
+      verify(vscreen.close());
+      verify(vscreen.unsubscribe());
+
+      curState = await stateQueue.next;
+      expect(curState.title, equals(info1.title));
+      expect(curState.thumbnailURL, equals(info1.thumbnailURL));
+      expect(curState.volume, equals(info1.volume));
+      expect(curState.position, equals(info1.position));
+      expect(curState.isPlaying, equals(true));
+    });
+  });
 }
