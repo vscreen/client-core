@@ -22,6 +22,12 @@ class VScreen {
         options: new CallOptions(timeout: new Duration(seconds: 30)));
   }
 
+  /// DO NOT USE THIS CONSTRUCTOR!
+  VScreen.test(this.stub) {
+    _user = User();
+    _user.id = _id;
+  }
+
   void close() async {
     await this.channel.shutdown();
   }
