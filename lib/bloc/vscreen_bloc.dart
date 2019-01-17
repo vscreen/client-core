@@ -138,7 +138,7 @@ class VScreenBloc {
 
   void _seek(Seek e) async {
     if (_vscreen == null) return;
-    var status = await _vscreen.pause();
+    var status = await _vscreen.seek(e.position);
     if (status.code.name != "OK") {
       throw OperationFailed();
     }
