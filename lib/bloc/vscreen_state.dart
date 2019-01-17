@@ -15,16 +15,24 @@ class VScreenState {
 
   VScreenState._();
 
-  factory VScreenState.inital() {
+  factory VScreenState.inital(
+      {String url = "",
+      int port = 8080,
+      String errorReason = "",
+      String title = "video title",
+      String thumbnailURL = "",
+      bool isPlaying = false,
+      double position = 0.0,
+      double volume = 0.0}) {
     // TODO! Replace with more suitable default values
-    _instance.url = "";
-    _instance.port = 8080;
-    _instance.errorReason = "";
-    _instance.title = "video title";
-    _instance.thumbnailURL = "";
-    _instance.isPlaying = false;
-    _instance.position = 0.0;
-    _instance.volume = 0.0;
+    _instance.url = url;
+    _instance.port = port;
+    _instance.errorReason = errorReason;
+    _instance.title = title;
+    _instance.thumbnailURL = thumbnailURL;
+    _instance.isPlaying = isPlaying;
+    _instance.position = position;
+    _instance.volume = volume;
 
     return _instance;
   }

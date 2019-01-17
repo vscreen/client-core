@@ -8,6 +8,7 @@ const StatusCode$json = const {
   '1': 'StatusCode',
   '2': const [
     const {'1': 'OK', '2': 0},
+    const {'1': 'OPERATION_FAILED', '2': 1},
   ],
 };
 

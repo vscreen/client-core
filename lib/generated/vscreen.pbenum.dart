@@ -10,9 +10,11 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class StatusCode extends $pb.ProtobufEnum {
   static const StatusCode OK = const StatusCode._(0, 'OK');
+  static const StatusCode OPERATION_FAILED = const StatusCode._(1, 'OPERATION_FAILED');
 
   static const List<StatusCode> values = const <StatusCode> [
     OK,
+    OPERATION_FAILED,
   ];
 
   static final Map<int, StatusCode> _byValue = $pb.ProtobufEnum.initByValue(values);

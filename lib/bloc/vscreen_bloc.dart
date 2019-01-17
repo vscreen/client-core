@@ -11,8 +11,8 @@ class VScreenBloc {
 
   final StreamController<VScreenState> _stateController =
       StreamController.broadcast();
-  EventSink get _inState => _stateController.sink;
-  Stream get vscreenState => _stateController.stream;
+  EventSink<VScreenState> get _inState => _stateController.sink;
+  Stream<VScreenState> get vscreenState => _stateController.stream;
 
   VScreenState _state;
   VScreen _vscreen = null; // Repository
@@ -29,25 +29,25 @@ class VScreenBloc {
     _eventController.stream.listen(mapEventToState);
   }
 
-  void mapEventToState(VScreenEvent event) {
+  void mapEventToState(VScreenEvent event) async {
     // clear up error reason to avoid false false error.
     _state.errorReason = "";
 
     try {
       if (event is Connect) {
-        _connect(event);
+        await _connect(event);
       } else if (event is Play) {
-        _play(event);
+        await _play(event);
       } else if (event is Pause) {
-        _pause(event);
+        await _pause(event);
       } else if (event is Stop) {
-        _stop(event);
+        await _stop(event);
       } else if (event is Next) {
-        _next(event);
+        await _next(event);
       } else if (event is Add) {
-        _add(event);
+        await _add(event);
       } else if (event is Seek) {
-        _seek(event);
+        await _seek(event);
       }
     } on OperationFailed catch (e) {
       _error(event, e.cause);
