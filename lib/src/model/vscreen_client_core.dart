@@ -18,8 +18,7 @@ class VScreen {
         port: port,
         options: const ChannelOptions(
             credentials: const ChannelCredentials.insecure()));
-    stub = VScreenClient(channel,
-        options: new CallOptions(timeout: new Duration(seconds: 30)));
+    stub = VScreenClient(channel);
   }
 
   /// DO NOT USE THIS CONSTRUCTOR!
