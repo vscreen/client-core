@@ -35,6 +35,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   @override
   Stream<PlayerState> mapEventToState(
       PlayerState currentState, PlayerEvent event) async* {
+    print("[player] received ${event} event");
     try {
       if (event is SetVScreen) {
         await _setVScreen(event);
