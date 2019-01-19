@@ -17,6 +17,7 @@ class ErrorBloc extends Bloc<ErrorEvent, ErrorState> {
   @override
   Stream<ErrorState> mapEventToState(
       ErrorState currentState, ErrorEvent event) async* {
+    print("[error] received ${event} event");
     if (event is NewError) {
       yield ErrorState(reason: event.reason);
     }

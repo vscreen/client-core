@@ -27,6 +27,7 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
   @override
   Stream<ConnectionState> mapEventToState(
       ConnectionState currentState, ConnectionEvent event) async* {
+    print("[connection] received ${event} event");
     try {
       if (event is Connect) {
         _playerBloc.dispatch(SetVScreen(VScreen(event.url, event.port)));
