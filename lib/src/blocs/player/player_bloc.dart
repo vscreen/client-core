@@ -13,9 +13,12 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   VScreen _vscreen = null;
   StreamSubscription _subscription = null;
 
-  final ErrorBloc _errorBloc = ErrorBloc();
+  final ErrorBloc _errorBloc;
 
-  static final PlayerBloc _internal = PlayerBloc();
+  static final PlayerBloc _internal = PlayerBloc._();
+
+  PlayerBloc._() : _errorBloc = ErrorBloc() {}
+
   factory PlayerBloc() {
     return _internal;
   }

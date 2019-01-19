@@ -3,7 +3,10 @@ import './error_internal_event.dart';
 import './error_state.dart';
 
 class ErrorBloc extends Bloc<ErrorEvent, ErrorState> {
-  static final ErrorBloc _instance = ErrorBloc();
+  static final ErrorBloc _instance = ErrorBloc._();
+
+  ErrorBloc._() {}
+
   factory ErrorBloc() {
     return _instance;
   }

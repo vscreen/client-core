@@ -8,10 +8,15 @@ import '../player/player_bloc.dart';
 import '../player/player_internal_event.dart';
 
 class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
-  final ErrorBloc _errorBloc = ErrorBloc();
-  final PlayerBloc _playerBloc = PlayerBloc();
+  final ErrorBloc _errorBloc;
+  final PlayerBloc _playerBloc;
 
-  static final ConnectionBloc _internal = ConnectionBloc();
+  static final ConnectionBloc _internal = ConnectionBloc._();
+
+  ConnectionBloc._()
+      : _errorBloc = ErrorBloc(),
+        _playerBloc = PlayerBloc() {}
+
   factory ConnectionBloc() {
     return _internal;
   }

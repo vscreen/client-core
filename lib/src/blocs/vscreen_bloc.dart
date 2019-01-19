@@ -3,11 +3,16 @@ import './error/error_bloc.dart';
 import './player/player_bloc.dart';
 
 class VScreenBloc {
-  final ConnectionBloc connection = ConnectionBloc();
-  final ErrorBloc error = ErrorBloc();
-  final PlayerBloc player = PlayerBloc();
+  final ConnectionBloc connection;
+  final ErrorBloc error;
+  final PlayerBloc player;
 
-  static final VScreenBloc _internal = VScreenBloc();
+  static final VScreenBloc _internal = VScreenBloc._();
+
+  VScreenBloc._()
+      : connection = ConnectionBloc(),
+        error = ErrorBloc(),
+        player = PlayerBloc() {}
 
   factory VScreenBloc() {
     return _internal;
