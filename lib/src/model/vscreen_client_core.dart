@@ -28,7 +28,7 @@ class VScreen {
     _user.id = _id;
   }
 
-  void close() async {
+  Future<void> close() async {
     await this.channel.shutdown();
   }
 
