@@ -40,7 +40,7 @@ const Source$json = const {
 const Position$json = const {
   '1': 'Position',
   '2': const [
-    const {'1': 'value', '3': 1, '4': 1, '5': 2, '10': 'value'},
+    const {'1': 'value', '3': 1, '4': 1, '5': 1, '10': 'value'},
   ],
 };
 

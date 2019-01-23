@@ -1,7 +1,7 @@
 #!/bin/sh
 
 UPSTREAM_URL="https://codeload.github.com/vscreen/spec/zip/master"
-OUT_DIR="lib/generated"
+OUT_DIR="lib/src/generated"
 
 cd `dirname $0`
 

@@ -117,7 +117,7 @@ class Source extends $pb.GeneratedMessage {
 
 class Position extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Position')
-    ..a<double>(1, 'value', $pb.PbFieldType.OF)
+    ..a<double>(1, 'value', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -137,7 +137,7 @@ class Position extends $pb.GeneratedMessage {
   }
 
   double get value => $_getN(0);
-  set value(double v) { $_setFloat(0, v); }
+  set value(double v) { $_setDouble(0, v); }
   bool hasValue() => $_has(0);
   void clearValue() => clearField(1);
 }
