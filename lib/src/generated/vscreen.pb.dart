@@ -172,10 +172,10 @@ class User extends $pb.GeneratedMessage {
 class Info extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = new $pb.BuilderInfo('Info')
     ..aOS(1, 'title')
-    ..aOS(2, 'thumbnailURL')
+    ..aOS(2, 'thumbnail')
     ..a<double>(3, 'volume', $pb.PbFieldType.OD)
     ..a<double>(4, 'position', $pb.PbFieldType.OD)
-    ..e<Info_State>(5, 'state', $pb.PbFieldType.OE, Info_State.PLAYING, Info_State.valueOf, Info_State.values)
+    ..aOB(5, 'playing')
     ..hasRequiredFields = false
   ;
 
@@ -199,10 +199,10 @@ class Info extends $pb.GeneratedMessage {
   bool hasTitle() => $_has(0);
   void clearTitle() => clearField(1);
 
-  String get thumbnailURL => $_getS(1, '');
-  set thumbnailURL(String v) { $_setString(1, v); }
-  bool hasThumbnailURL() => $_has(1);
-  void clearThumbnailURL() => clearField(2);
+  String get thumbnail => $_getS(1, '');
+  set thumbnail(String v) { $_setString(1, v); }
+  bool hasThumbnail() => $_has(1);
+  void clearThumbnail() => clearField(2);
 
   double get volume => $_getN(2);
   set volume(double v) { $_setDouble(2, v); }
@@ -214,9 +214,9 @@ class Info extends $pb.GeneratedMessage {
   bool hasPosition() => $_has(3);
   void clearPosition() => clearField(4);
 
-  Info_State get state => $_getN(4);
-  set state(Info_State v) { setField(5, v); }
-  bool hasState() => $_has(4);
-  void clearState() => clearField(5);
+  bool get playing => $_get(4, false);
+  set playing(bool v) { $_setBool(4, v); }
+  bool hasPlaying() => $_has(4);
+  void clearPlaying() => clearField(5);
 }
 

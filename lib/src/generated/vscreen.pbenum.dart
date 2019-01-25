@@ -26,23 +26,3 @@ class StatusCode extends $pb.ProtobufEnum {
   const StatusCode._(int v, String n) : super(v, n);
 }
 
-class Info_State extends $pb.ProtobufEnum {
-  static const Info_State PLAYING = const Info_State._(0, 'PLAYING');
-  static const Info_State PAUSED = const Info_State._(1, 'PAUSED');
-  static const Info_State STOPPED = const Info_State._(2, 'STOPPED');
-
-  static const List<Info_State> values = const <Info_State> [
-    PLAYING,
-    PAUSED,
-    STOPPED,
-  ];
-
-  static final Map<int, Info_State> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static Info_State valueOf(int value) => _byValue[value];
-  static void $checkItem(Info_State v) {
-    if (v is! Info_State) $pb.checkItemFailed(v, 'Info_State');
-  }
-
-  const Info_State._(int v, String n) : super(v, n);
-}
-

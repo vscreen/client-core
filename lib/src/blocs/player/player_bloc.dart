@@ -91,8 +91,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     var info = e.info;
     return PlayerState(
         title: info.title,
-        thumbnailURL: info.thumbnailURL,
-        isPlaying: info.state == Info_State.PLAYING ? true : false,
+        thumbnail: info.thumbnail,
+        playing: info.playing,
         position: info.position,
         volume: info.volume);
   }
