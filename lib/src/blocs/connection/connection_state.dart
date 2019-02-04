@@ -1,9 +1,23 @@
 import 'package:meta/meta.dart';
 
+abstract class ConnectionState {}
+
 @immutable
-class ConnectionState {
+class NewConnection extends ConnectionState {
   final String url;
   final int port;
 
-  ConnectionState({this.url = "", this.port = 8080});
+  NewConnection({@required this.url, @required this.port});
+}
+
+@immutable
+class Connecting extends ConnectionState {
+  Connecting();
+}
+
+@immutable
+class ConnectionFailed extends ConnectionState {
+  final String reason;
+
+  ConnectionFailed({@required this.reason});
 }

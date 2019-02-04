@@ -1,23 +1,18 @@
 import 'package:bloc/bloc.dart';
 import './player_event.dart';
 import './player_state.dart';
-import '../exceptions.dart';
 import '../../model/vscreen_client_core.dart';
 import '../../generated/vscreen.pb.dart';
 import './player_internal_event.dart';
-import '../error/error_bloc.dart';
-import '../error/error_internal_event.dart';
 import 'dart:async';
 
 class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   VScreen _vscreen = null;
   StreamSubscription _subscription = null;
 
-  final ErrorBloc _errorBloc;
-
   static final PlayerBloc _internal = PlayerBloc._();
 
-  PlayerBloc._() : _errorBloc = ErrorBloc() {}
+  PlayerBloc._() {}
 
   factory PlayerBloc() {
     return _internal;
@@ -30,7 +25,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   }
 
   @override
-  PlayerState get initialState => PlayerState();
+  PlayerState get initialState => NewInfo();
 
   @override
   Stream<PlayerState> mapEventToState(
@@ -58,10 +53,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
           await _seek(event);
         }
       }
-    } on OperationFailed catch (e) {
-      _emitError(event, e.cause);
     } on Exception catch (_) {
-      _emitError(event, "unknown error");
+      yield OperationFailed(reason: "operation failed");
     }
   }
 
@@ -89,7 +82,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
 
   PlayerState _serverUpdate(ServerUpdate e) {
     var info = e.info;
-    return PlayerState(
+    return NewInfo(
         title: info.title,
         thumbnail: info.thumbnail,
         playing: info.playing,
@@ -100,21 +93,21 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
   Future<void> _play(Play e) async {
     var status = await _vscreen.play();
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
   }
 
   Future<void> _pause(Pause e) async {
     var status = await _vscreen.pause();
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
   }
 
   Future<void> _stop(Stop e) async {
     var status = await _vscreen.stop();
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
   }
 
@@ -122,25 +115,21 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerState> {
     if (_vscreen == null) return;
     var status = await _vscreen.next();
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
   }
 
   Future<void> _add(Add e) async {
     var status = await _vscreen.add(e.url);
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
   }
 
   Future<void> _seek(Seek e) async {
     var status = await _vscreen.seek(e.position);
     if (status.code != StatusCode.OK) {
-      throw OperationFailed();
+      throw Exception();
     }
-  }
-
-  void _emitError(PlayerEvent e, String reason) {
-    _errorBloc.dispatch(NewError(reason: "[${e.toString()}] ${reason}"));
   }
 }
