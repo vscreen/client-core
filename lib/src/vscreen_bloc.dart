@@ -8,11 +8,9 @@ import 'package:uuid/uuid.dart';
 class VScreenBloc {
   final _connectionSubject = BehaviorSubject<Connection>();
   final _infoSubject = BehaviorSubject<PlayerInfo>();
-  final _loadingSubject = BehaviorSubject<bool>();
 
   Observable<Connection> get connection => _connectionSubject.stream;
   Observable<PlayerInfo> get info => _infoSubject.stream;
-  Observable<bool> get loading => _loadingSubject.stream;
 
   final String _id = Uuid().v4();
   ClientChannel _channel = null;
@@ -24,30 +22,45 @@ class VScreenBloc {
     await disconnect();
     await _infoSubject.close();
     await _connectionSubject.close();
-    await _loadingSubject.close();
   }
 
   Future<void> connect(String url, int port) async {
-    await disconnect();
+    _connectionSubject.add(null);
+    var localUser = User();
+    localUser.id = _id;
 
-    _user = User();
-    _user.id = _id;
-
-    _channel = ClientChannel(url,
+    var localChannel = ClientChannel(url,
         port: port,
         options: const ChannelOptions(
             credentials: const ChannelCredentials.insecure()));
-    _stub = VScreenClient(_channel);
-    _subscriptionChannel = _stub.subscribe(_user);
-    _subscriptionChannel
-        .map((info) => PlayerInfo(
-            title: info.title,
-            thumbnail: info.thumbnail,
-            playing: info.playing,
-            position: info.position,
-            volume: info.volume))
-        .pipe(_infoSubject);
-    _connectionSubject.add(Connection(url: url, port: port));
+    var localStub = VScreenClient(localChannel);
+
+    try {
+      await localStub
+          .auth(Credential())
+          .timeout(Duration(seconds: 3)); // dummy check
+      var localSubscriptionChannel = localStub.subscribe(localUser);
+
+      // Safe to swap current user with new user
+      await disconnect();
+      _stub = localStub;
+      _channel = localChannel;
+      _user = localUser;
+      _subscriptionChannel = localSubscriptionChannel;
+
+      _subscriptionChannel
+          .map((info) => PlayerInfo(
+              title: info.title,
+              thumbnail: info.thumbnail,
+              playing: info.playing,
+              position: info.position,
+              volume: info.volume))
+          .pipe(_infoSubject);
+
+      _connectionSubject.add(Connection(url: url, port: port));
+    } catch (e) {
+      _connectionSubject.addError("connection timeout");
+    }
   }
 
   Future<void> disconnect() async {
