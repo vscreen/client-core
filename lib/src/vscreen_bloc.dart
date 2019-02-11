@@ -1,30 +1,44 @@
 import 'package:rxdart/rxdart.dart';
-import './vscreen_state.dart';
+import './vscreen_state.dart' as state;
 import './generated/vscreen.pb.dart';
 import './generated/vscreen.pbgrpc.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
 
 class VScreenBloc {
-  final _connectionSubject = BehaviorSubject<Connection>();
-  final _infoSubject = BehaviorSubject<PlayerInfo>();
+  final _connectionSubject = BehaviorSubject<state.ConnectionState>();
+  final _playerSubject = BehaviorSubject<state.PlayerState>();
 
-  Observable<Connection> get connection => _connectionSubject.stream;
-  Observable<PlayerInfo> get info => _infoSubject.stream;
+  Observable<state.ConnectionState> get connection => _connectionSubject.stream;
+  Observable<state.PlayerState> get player => _playerSubject.stream;
 
   ClientChannel _channel = null;
   VScreenClient _stub = null;
   User _user = null;
   Stream<Info> _subscriptionChannel = null;
-  Connection _lastConnection = null;
+  state.Connected _lastConnection = null;
 
   Future<void> dispose() async {
     await disconnect();
-    await _infoSubject.close();
     await _connectionSubject.close();
   }
 
+  Future<void> _cleanup() async {
+    if (_stub != null && _user != null) {
+      try {
+        await _stub.unsubscribe(_user);
+      } catch (_) {}
+    }
+    if (_channel != null) await _channel.terminate();
+
+    _stub = null;
+    _subscriptionChannel = null;
+    _channel = null;
+    _user = null;
+  }
+
   Future<void> connect(String url, int port) async {
+    _connectionSubject.add(state.Connecting());
     var localUser = User();
     localUser.id = Uuid().v4();
 
@@ -41,25 +55,24 @@ class VScreenBloc {
       var localSubscriptionChannel = localStub.subscribe(localUser);
 
       // Safe to swap current user with new user
-      await disconnect();
+      await _cleanup();
       _stub = localStub;
       _channel = localChannel;
       _user = localUser;
       _subscriptionChannel = localSubscriptionChannel;
 
       _subscriptionChannel
-          .map((info) => PlayerInfo(
+          .map((info) => state.NewPlayerInfo(
               title: info.title,
               thumbnail: info.thumbnail,
               playing: info.playing,
               position: info.position,
               volume: info.volume))
-          .forEach((info) => _infoSubject.add(info));
+          .forEach((info) => _playerSubject.add(info));
 
-      _lastConnection = Connection(url: url, port: port);
+      _lastConnection = state.Connected(url: url, port: port);
       _connectionSubject.add(_lastConnection);
     } catch (e) {
-      print(e);
       _connectionSubject.addError("connection timeout");
     }
   }
@@ -70,46 +83,43 @@ class VScreenBloc {
   }
 
   Future<void> disconnect() async {
-    print("1");
-    if (_stub != null && _user != null) {
-      try {
-        await _stub.unsubscribe(_user);
-      } catch (_) {}
-    }
-    print("2");
-    if (_channel != null) await _channel.shutdown();
-
-    _stub = null;
-    _subscriptionChannel = null;
-    _channel = null;
-    _user = null;
-    print("3");
-    _connectionSubject.add(Connection(url: "", port: 8080));
+    await _cleanup();
+    _connectionSubject.add(state.Disconnected());
   }
 
   Future<void> play() async {
+    if (_stub == null) return;
     await _stub.play(Empty());
   }
 
   Future<void> pause() async {
+    if (_stub == null) return;
     await _stub.pause(Empty());
   }
 
   Future<void> stop() async {
+    if (_stub == null) return;
     await _stub.stop(Empty());
   }
 
   Future<void> next() async {
+    if (_stub == null) return;
     await _stub.next(Empty());
   }
 
+  /// Add adds url to the player queue. This operation will wait until
+  /// connected.
   Future<void> add(String url) async {
     var source = Source();
     source.url = url;
+
+    await connection
+        .firstWhere((currentState) => currentState is state.Connected);
     await _stub.add(source);
   }
 
   Future<void> seek(double pos) async {
+    if (_stub == null) return;
     var position = Position();
     position.value = pos;
     await _stub.seek(position);

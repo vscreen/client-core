@@ -1,22 +1,30 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class Connection {
+abstract class ConnectionState {}
+
+class Connected extends ConnectionState {
   final String url;
   final int port;
 
-  Connection({@required this.url, @required this.port});
+  Connected({@required this.url, @required this.port});
 }
 
+class Connecting extends ConnectionState {}
+
+class Disconnected extends ConnectionState {}
+
 @immutable
-class PlayerInfo {
+abstract class PlayerState {}
+
+class NewPlayerInfo extends PlayerState {
   final String title;
   final String thumbnail;
   final bool playing;
   final double position;
   final double volume;
 
-  PlayerInfo(
+  NewPlayerInfo(
       {this.title = "video title",
       this.thumbnail = "",
       this.playing = false,
