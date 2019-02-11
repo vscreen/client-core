@@ -12,11 +12,11 @@ class VScreenBloc {
   Observable<Connection> get connection => _connectionSubject.stream;
   Observable<PlayerInfo> get info => _infoSubject.stream;
 
-  final String _id = Uuid().v4();
   ClientChannel _channel = null;
   VScreenClient _stub = null;
   User _user = null;
   Stream<Info> _subscriptionChannel = null;
+  Connection _lastConnection = null;
 
   Future<void> dispose() async {
     await disconnect();
@@ -25,9 +25,8 @@ class VScreenBloc {
   }
 
   Future<void> connect(String url, int port) async {
-    _connectionSubject.add(null);
     var localUser = User();
-    localUser.id = _id;
+    localUser.id = Uuid().v4();
 
     var localChannel = ClientChannel(url,
         port: port,
@@ -55,23 +54,36 @@ class VScreenBloc {
               playing: info.playing,
               position: info.position,
               volume: info.volume))
-          .pipe(_infoSubject);
+          .forEach((info) => _infoSubject.add(info));
 
-      _connectionSubject.add(Connection(url: url, port: port));
+      _lastConnection = Connection(url: url, port: port);
+      _connectionSubject.add(_lastConnection);
     } catch (e) {
+      print(e);
       _connectionSubject.addError("connection timeout");
     }
   }
 
+  Future<void> reconnect() async {
+    if (_lastConnection == null) return;
+    await connect(_lastConnection.url, _lastConnection.port);
+  }
+
   Future<void> disconnect() async {
-    if (_stub != null && _user != null) await _stub.unsubscribe(_user);
-    if (_subscriptionChannel != null) await _subscriptionChannel.drain();
+    print("1");
+    if (_stub != null && _user != null) {
+      try {
+        await _stub.unsubscribe(_user);
+      } catch (_) {}
+    }
+    print("2");
     if (_channel != null) await _channel.shutdown();
 
     _stub = null;
     _subscriptionChannel = null;
     _channel = null;
     _user = null;
+    print("3");
     _connectionSubject.add(Connection(url: "", port: 8080));
   }
 
