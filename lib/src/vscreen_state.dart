@@ -1,7 +1,28 @@
 import 'package:meta/meta.dart';
+import 'package:quiver/core.dart';
 
 @immutable
 abstract class ConnectionState {}
+
+@immutable
+class Connection {
+  final String host;
+  final int port;
+
+  Connection({@required this.host, @required this.port});
+  bool operator ==(other) =>
+      other is Connection && host == other.host && port == other.port;
+
+  int get hashCode => hash2(host.hashCode, port.hashCode);
+}
+
+class Discovered extends ConnectionState {
+  final Set<Connection> services;
+
+  Discovered({@required this.services});
+}
+
+class Discovering extends ConnectionState {}
 
 class Connected extends ConnectionState {
   final String url;

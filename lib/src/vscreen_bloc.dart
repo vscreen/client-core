@@ -1,11 +1,17 @@
+import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 import './vscreen_state.dart' as state;
 import './generated/vscreen.pb.dart';
 import './generated/vscreen.pbgrpc.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:async';
+import 'dart:collection';
 
 class VScreenBloc {
+  final String _serviceTag = '_vscreen._tcp.local';
+
   final _connectionSubject = BehaviorSubject<state.ConnectionState>();
   final _playerSubject = BehaviorSubject<state.PlayerState>();
 
@@ -123,5 +129,39 @@ class VScreenBloc {
     var position = Position();
     position.value = pos;
     await _stub.seek(position);
+  }
+
+  CancelableOperation<bool> startDiscovering() {
+    final discovered = HashSet<state.Connection>();
+    final MDnsClient client = MDnsClient();
+    bool cancelled = false;
+
+    return CancelableOperation.fromFuture(() async {
+      await Future.delayed(Duration(seconds: 3));
+      _connectionSubject.add(state.Discovering());
+      // Start the client with default options.
+      await client.start();
+
+      // Get the PTR recod for the service.
+      outerLoop:
+      await for (PtrResourceRecord ptr in client.lookup<PtrResourceRecord>(
+          ResourceRecordQuery.serverPointer(_serviceTag))) {
+        if (cancelled) break;
+        // Use the domainName from the PTR record to get the SRV record,
+        // which will have the port and local hostname.
+        // Note that duplicate messages may come through, especially if any
+        // other mDNS queries are running elsewhere on the machine.
+        await for (SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+            ResourceRecordQuery.service(ptr.domainName))) {
+          if (cancelled) break outerLoop;
+          discovered.add(state.Connection(host: srv.target, port: srv.port));
+          _connectionSubject.add(state.Discovered(services: discovered));
+        }
+      }
+      client.stop();
+      return true;
+    }(), onCancel: () {
+      cancelled = true;
+    });
   }
 }
