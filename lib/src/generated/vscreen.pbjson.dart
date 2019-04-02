@@ -59,6 +59,7 @@ const Info$json = const {
     const {'1': 'volume', '3': 3, '4': 1, '5': 1, '10': 'volume'},
     const {'1': 'position', '3': 4, '4': 1, '5': 1, '10': 'position'},
     const {'1': 'playing', '3': 5, '4': 1, '5': 8, '10': 'playing'},
+    const {'1': 'duration', '3': 6, '4': 1, '5': 4, '10': 'duration'},
   ],
 };
 

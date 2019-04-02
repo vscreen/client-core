@@ -7,6 +7,7 @@
 // ignore: UNUSED_SHOWN_NAME
 import 'dart:core' show int, bool, double, String, List, Map, override;
 
+import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'vscreen.pbenum.dart';
@@ -29,9 +30,6 @@ class Empty extends $pb.GeneratedMessage {
   static $pb.PbList<Empty> createRepeated() => new $pb.PbList<Empty>();
   static Empty getDefault() => _defaultInstance ??= create()..freeze();
   static Empty _defaultInstance;
-  static void $checkItem(Empty v) {
-    if (v is! Empty) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 }
 
 class Status extends $pb.GeneratedMessage {
@@ -51,9 +49,6 @@ class Status extends $pb.GeneratedMessage {
   static $pb.PbList<Status> createRepeated() => new $pb.PbList<Status>();
   static Status getDefault() => _defaultInstance ??= create()..freeze();
   static Status _defaultInstance;
-  static void $checkItem(Status v) {
-    if (v is! Status) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   StatusCode get code => $_getN(0);
   set code(StatusCode v) { setField(1, v); }
@@ -78,9 +73,6 @@ class Credential extends $pb.GeneratedMessage {
   static $pb.PbList<Credential> createRepeated() => new $pb.PbList<Credential>();
   static Credential getDefault() => _defaultInstance ??= create()..freeze();
   static Credential _defaultInstance;
-  static void $checkItem(Credential v) {
-    if (v is! Credential) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   String get password => $_getS(0, '');
   set password(String v) { $_setString(0, v); }
@@ -105,9 +97,6 @@ class Source extends $pb.GeneratedMessage {
   static $pb.PbList<Source> createRepeated() => new $pb.PbList<Source>();
   static Source getDefault() => _defaultInstance ??= create()..freeze();
   static Source _defaultInstance;
-  static void $checkItem(Source v) {
-    if (v is! Source) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   String get url => $_getS(0, '');
   set url(String v) { $_setString(0, v); }
@@ -132,9 +121,6 @@ class Position extends $pb.GeneratedMessage {
   static $pb.PbList<Position> createRepeated() => new $pb.PbList<Position>();
   static Position getDefault() => _defaultInstance ??= create()..freeze();
   static Position _defaultInstance;
-  static void $checkItem(Position v) {
-    if (v is! Position) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   double get value => $_getN(0);
   set value(double v) { $_setDouble(0, v); }
@@ -159,9 +145,6 @@ class User extends $pb.GeneratedMessage {
   static $pb.PbList<User> createRepeated() => new $pb.PbList<User>();
   static User getDefault() => _defaultInstance ??= create()..freeze();
   static User _defaultInstance;
-  static void $checkItem(User v) {
-    if (v is! User) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   String get id => $_getS(0, '');
   set id(String v) { $_setString(0, v); }
@@ -176,6 +159,7 @@ class Info extends $pb.GeneratedMessage {
     ..a<double>(3, 'volume', $pb.PbFieldType.OD)
     ..a<double>(4, 'position', $pb.PbFieldType.OD)
     ..aOB(5, 'playing')
+    ..a<Int64>(6, 'duration', $pb.PbFieldType.OU6, Int64.ZERO)
     ..hasRequiredFields = false
   ;
 
@@ -190,9 +174,6 @@ class Info extends $pb.GeneratedMessage {
   static $pb.PbList<Info> createRepeated() => new $pb.PbList<Info>();
   static Info getDefault() => _defaultInstance ??= create()..freeze();
   static Info _defaultInstance;
-  static void $checkItem(Info v) {
-    if (v is! Info) $pb.checkItemFailed(v, _i.qualifiedMessageName);
-  }
 
   String get title => $_getS(0, '');
   set title(String v) { $_setString(0, v); }
@@ -218,5 +199,10 @@ class Info extends $pb.GeneratedMessage {
   set playing(bool v) { $_setBool(4, v); }
   bool hasPlaying() => $_has(4);
   void clearPlaying() => clearField(5);
+
+  Int64 get duration => $_getI64(5);
+  set duration(Int64 v) { $_setInt64(5, v); }
+  bool hasDuration() => $_has(5);
+  void clearDuration() => clearField(6);
 }
 

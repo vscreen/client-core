@@ -19,9 +19,6 @@ class StatusCode extends $pb.ProtobufEnum {
 
   static final Map<int, StatusCode> _byValue = $pb.ProtobufEnum.initByValue(values);
   static StatusCode valueOf(int value) => _byValue[value];
-  static void $checkItem(StatusCode v) {
-    if (v is! StatusCode) $pb.checkItemFailed(v, 'StatusCode');
-  }
 
   const StatusCode._(int v, String n) : super(v, n);
 }

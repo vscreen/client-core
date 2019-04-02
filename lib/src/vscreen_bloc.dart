@@ -4,6 +4,7 @@ import './generated/vscreen.pb.dart';
 import './generated/vscreen.pbgrpc.dart';
 import 'package:grpc/grpc.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:async';
 
 class VScreenBloc {
   final _connectionSubject = BehaviorSubject<state.ConnectionState>();
@@ -67,7 +68,8 @@ class VScreenBloc {
               thumbnail: info.thumbnail,
               playing: info.playing,
               position: info.position,
-              volume: info.volume))
+              volume: info.volume,
+              duration: info.duration.toInt()))
           .forEach((info) => _playerSubject.add(info));
 
       _lastConnection = state.Connected(url: url, port: port);

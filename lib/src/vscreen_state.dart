@@ -23,11 +23,13 @@ class NewPlayerInfo extends PlayerState {
   final bool playing;
   final double position;
   final double volume;
+  final int duration;
 
   NewPlayerInfo(
       {this.title = "video title",
       this.thumbnail = "",
       this.playing = false,
       this.position = 0.0,
-      this.volume = 0.0});
+      this.volume = 0.0,
+      this.duration = 0});
 }
