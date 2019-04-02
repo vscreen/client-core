@@ -5,7 +5,7 @@ version: 0.1.7
 authors:
   - Lukas Herman <lherman.cs@gmail.com>
 dependencies:
-  grpc:
+  grpc: 1.0.1
   protobuf:
   uuid: 2.0.0-rc1
   rxdart: ^0.20.0
@@ -13,4 +13,4 @@ dev_dependencies:
   mockito: ^4.0.0
   test: ^1.5.1+1
 environment:
-    sdk: ">=1.8.0 <3.0.0"
+  sdk: ">=1.8.0 <3.0.0"
