@@ -38,6 +38,16 @@ class VScreenBloc {
     _user = null;
   }
 
+  state.NewPlayerInfo _mapGrpc(info) {
+    return state.NewPlayerInfo(
+        title: info.title,
+        thumbnail: info.thumbnail,
+        playing: info.playing,
+        position: info.position,
+        volume: info.volume,
+        duration: info.duration.toInt());
+  }
+
   Future<void> connect(String url, int port) async {
     _connectionSubject.add(state.Connecting());
     var localUser = User();
@@ -63,13 +73,7 @@ class VScreenBloc {
       _subscriptionChannel = localSubscriptionChannel;
 
       _subscriptionChannel
-          .map((info) => state.NewPlayerInfo(
-              title: info.title,
-              thumbnail: info.thumbnail,
-              playing: info.playing,
-              position: info.position,
-              volume: info.volume,
-              duration: info.duration.toInt()))
+          .map(_mapGrpc)
           .forEach((info) => _playerSubject.add(info));
 
       _lastConnection = state.Connected(url: url, port: port);
